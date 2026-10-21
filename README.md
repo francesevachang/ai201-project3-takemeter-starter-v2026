@@ -42,7 +42,7 @@
 <!-- Your community, and what your classifier sorts posts into. Three or four
      sentences. -->
 
-I collected 200 public posts from r/MSCS on Reddit, where prospective and current students discuss Master's in Computer Science programs, including admissions, costs, program comparisons, and careers. Reading through them, I noticed several things I could point at: some posts include concrete numbers (GPA, tuition, years of experience, acceptance results) and most don't; some ask a question while others assert a claim; some draw on first-hand experience ("I'm a current student at...") while others pass along what they've heard; and some compare named programs while others discuss a single one. My classifier uses these distinctions to sort each post into `evidence_backed`, `unsupported_opinion`, and `question`, so it can separate grounded, specific posts from vague or unsupported ones.
+I collected 200 public posts from r/getdisciplined on Reddit, where people ask for help with, and share advice about, building habits, beating procrastination, and staying motivated, etc. Reading through them, I noticed several things I could point at: some posts describe a specific method or routine (a schedule, an app, a rule like "no phone in the bedroom") and most don't; some ask for help while others give advice; and some draw on the author's own experience while others offer generic motivation. My classifier uses these distinctions to sort each post into `actionable_advice`, `motivational_fluff`, and `help_request`, so it can separate posts a reader could act on from posts that only sound inspiring.
 
 ---
 
@@ -54,33 +54,43 @@ I collected 200 public posts from r/MSCS on Reddit, where prospective and curren
      The decision rule is worth a point on its own and it's the thing most
      people leave out. Every taxonomy has a hardest boundary. Name yours. -->
 
-### `label_one`
+### `actionable_advice`
 
-**Definition:**
+**Definition:** The post's main purpose is to recommend something to others, and it gives a concrete method or step a reader could try today (a step, routine, tool, rule, or timeline).
 
-**Example 1:**
+**Example 1:** [I stopped relying on motivation and made journaling a three question appointment](https://www.reddit.com/r/getdisciplined/comments/1xb70pm/i_stopped_relying_on_motivation_and_made/)
 >
 
-**Example 2:**
+**Example 2:** [[METHOD] How I went from rock bottom to disciplined in 6 months.](https://www.reddit.com/r/getdisciplined/comments/9t0gqz/method_how_i_went_from_rock_bottom_to_disciplined/)
 >
 
-### `label_two`
+### `motivational_fluff`
 
-**Definition:**
+**Definition:** The post's main purpose is to encourage or share a mindset ("just start," "discipline is freedom"), with no specific method a reader could act on.
 
-**Example 1:**
+**Example 1:** [[Advice] Don't prove them right or wrong!](https://www.reddit.com/r/getdisciplined/comments/n8fq60/advice_dont_prove_them_right_or_wrong/)
 >
 
-**Example 2:**
+**Example 2:** [Just 1 habit to change your life](https://www.reddit.com/r/getdisciplined/comments/1isg6mj/just_1_habit_to_change_your_life/)
+>
+
+### `help_request`
+
+**Definition:** The post's main purpose is to ask for advice or support with the author's own struggle. Any past attempts it describes are background, not recommendations.
+
+**Example 1:** [Tips for getting out of bed in the cold mornings?](https://www.reddit.com/r/getdisciplined/comments/1x9t5z9/tips_for_getting_out_of_bed_in_the_cold_mornings/)
+>
+
+**Example 2:** [Whenever I get stressed, my entire routine falls apart. How do I break this cycle?](https://www.reddit.com/r/getdisciplined/comments/1x8zg9n/whenever_i_get_stressed_my_entire_routine_falls/)
 >
 
 ### The hardest boundary
 
-**Which two labels:**
+The post [Just 1 habit to change your life](https://www.reddit.com/r/getdisciplined/comments/1isg6mj/just_1_habit_to_change_your_life/) was hard to decide a label for. 
 
-**The decision rule I used every time:**
-<!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
-     if the tone is heated." -->
+**Which two labels to decide between:** `actionable_advice` and `motivational_fluff`
+
+**The decision rule I used every time:** If the post names a concrete method that a reader could start without deciding what it means (what to do, and ideally when or how), it's actionable_advice. A general principle or attitude ("follow through," "be consistent," "just start") is motivational_fluff, even when phrased as a command and even if the post ends with a vague pointer to resources. The test I used was whether the advice could become a calendar entry or a checklist item. "Put your phone in another room from 9pm" can, and "do what you say you're going to do" can't.
 
 
 
