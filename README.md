@@ -42,7 +42,7 @@
 <!-- Your community, and what your classifier sorts posts into. Three or four
      sentences. -->
 
-
+I collected 200 public posts from r/MSCS on Reddit, where prospective and current students discuss Master's in Computer Science programs, including admissions, costs, program comparisons, and careers. Reading through them, I noticed several things I could point at: some posts include concrete numbers (GPA, tuition, years of experience, acceptance results) and most don't; some ask a question while others assert a claim; some draw on first-hand experience ("I'm a current student at...") while others pass along what they've heard; and some compare named programs while others discuss a single one. My classifier uses these distinctions to sort each post into `evidence_backed`, `unsupported_opinion`, and `question`, so it can separate grounded, specific posts from vague or unsupported ones.
 
 ---
 
