@@ -53,61 +53,41 @@ whether you hit them:
 
 ## 1.
 
-<!-- Your criterion. It must name a number. -->
+**Overall accuracy is at least 0.70 on the held-out set, in each of the three seeds.**
 
-
-
-**Why this target:**
-
-
+**Why this target:** Chance with three labels is about 0.33, and always guessing my biggest label scores that label's share of the data (I'll fill in the number once I've counted), so 0.70 should be a clear step up from both. I don't ask for more because `actionable_advice` vs `motivational_fluff` is fuzzy and 200 posts is little to learn it from.
 
 ---
 
 ## 2.
 
-<!-- Your criterion. -->
+**Every label has an F1 of at least 0.60 on the held-out set, in all three seeds, except `help_request`, which must reach 0.75.**
 
-
-
-**Why this target:**
-
-
+**Why this target:** `help_request` should be the easiest label (questions about the author's own struggle), so it gets a higher bar. 0.60 on the blurry advice/fluff pair is a real target. My smallest label might have few test posts, so its F1 will swing between seeds and I didn't go tighter.
 
 ---
 
 ## 3.
 
-<!-- Your criterion. -->
+**No label is under 20% of my 200 posts (at least 40 examples), and the largest label is at most 2.5 times the size of the smallest.**
 
-
-
-**Why this target:**
-
-
+**Why this target:** Natural sampling of r/getdisciplined will likely leave `help_request` short. Under 40 examples its test F1 would be too noisy to judge criterion 2. I allow 2.5:1 because forcing perfect balance would misrepresent the community.
 
 ---
 
 ## 4.
 
-<!-- Your criterion. -->
+**A second person who labels my held-out test posts using only my written definitions agrees with my labels on at least 80% of them.**
 
-
-
-**Why this target:**
-
-
+**Why this target:** The test labels are what the model gets graded against, so if someone reading only my definitions can't match me at 80%, my advice/fluff line is too fuzzy and the model's score is partly label noise. Not 90%, because the test split is small (about 30 to 40 posts) and borderline posts will split.
 
 ---
 
 ## 5.
 
-<!-- Your criterion. -->
+**Predictions with a top-class probability of at least 0.80 are correct at least 85% of the time, and there are at least 10 such predictions in the test set.**
 
-
-
-**Why this target:**
-
-
+**Why this target:** A confident prediction should beat the 0.70 overall bar by a clear margin, so high-confidence ones can be trusted and the rest reviewed. The minimum of 10 (my test split is only about 30 to 40 posts) stops a rarely-confident model passing on a few lucky cases.
 
 ---
 
