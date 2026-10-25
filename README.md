@@ -208,15 +208,26 @@ The post [Just 1 habit to change your life](https://www.reddit.com/r/getdiscipli
 
 <!-- Your starting model, your settings, and anything you changed and why. -->
 
-**Base model:**
+**Base model:** `distilbert-base-uncased`, fine-tuned for 3-way classification
+(`actionable_advice`, `motivational_fluff`, `help_request`).
 
-**Settings:** <!-- epochs, learning rate, batch size, seed -->
+**Settings:** 3 epochs, learning rate 2e-5, batch size 16, max length 128 tokens,
+seed 42. Trained on Apple Silicon GPU (MPS), torch 2.14.1.
 
-**Anything I changed from the defaults, and why:**
+**Anything I changed from the defaults, and why:** Nothing. All hyperparameters
+are the notebook defaults.
 
-**Split sizes:** <!-- train / val / test, and per-label counts in the test
-split. If a label had fewer than about 8 in test, say so — it explains a lot
-of next unit's variance. -->
+**Split sizes:** 284 labelled posts, stratified 70/15/15 (seed 42):
+
+| Split | Total | actionable_advice | motivational_fluff | help_request |
+|---|---|---|---|---|
+| Train | 198 | 60 | 53 | 85 |
+| Validation | 43 | 13 | 12 | 18 |
+| Test | 43 | 13 | 12 | 18 |
+
+No label has fewer than 8 posts in test, but 12–18 per label is still small:
+one post moves a label's recall by 6–8 points, so expect noticeable variance
+across seeds.
 
 
 
