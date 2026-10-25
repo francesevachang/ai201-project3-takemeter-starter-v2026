@@ -242,19 +242,17 @@ across seeds.
      workflow and disclosing it costs you nothing. Not disclosing it is the
      problem. -->
 
-**Moment 1**
+**Moment 1 — pre-labelling**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* An AI tool to label my posts using my label definitions, after I labelled 20 myself.
+- *What came back:* Labels for the other 264 posts. 134 are marked `pre-labelled` and 130 `pre-labelled, unsure` in the `note` column of `labels.csv`.
+- *What I changed:* I read the AI label and fixed the ones I disagreed with.
 
-**Moment 2**
+**Moment 2 — diagnosing my first run**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
-
-**Pre-labelling disclosure:**
+- *What I asked for:* Why my first run scored a low accuracy.
+- *What came back:* The model called 39 of 43 test posts `help_request`, with low confidence, which suggests underfitting. My posts average about 350 words but the notebook cuts them at 128 tokens. Its first list of "bad labels" came from only the first 200 characters of each post, so I'm treating it as a lead, not a finding.
+- *What I changed:* Nothing yet. Tuning belongs in unit 6, so I kept the default run. Truncation, training length and label ambiguity are hypotheses to test next unit.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
