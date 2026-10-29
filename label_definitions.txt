@@ -3,6 +3,6 @@
 # Copy these from your README so the baseline is judged on exactly the
 # definitions you wrote. baseline.py reads this file.
 
-actionable_advice: the post's main purpose is to recommend something to others, and it gives a concrete method or step a reader could try today (a step, routine, tool, rule, or timeline)
-motivational_fluff: the post's main purpose is to encourage or share a mindset ("just start," "discipline is freedom"), with no specific method a reader could act on
-help_request: the post's main purpose is to ask for advice or support with the author's own struggle; any past attempts it describes are background, not recommendations
+actionable_advice: the post's main purpose is to recommend something to others, and it gives a concrete method or step a reader could try today (a step, routine, tool, rule, or timeline).
+motivational_fluff: the post's main purpose is to encourage or share a mindset ("just start," "discipline is freedom"), with no specific method a reader could act on.
+help_request: the post's main purpose is to ask for advice or support with the author's own struggle. Any past attempts it describes are background, not recommendations

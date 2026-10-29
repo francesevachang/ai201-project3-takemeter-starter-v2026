@@ -268,18 +268,23 @@ across seeds.
 
 | Measure | Baseline | Trained | Difference |
 |---|---|---|---|
-| Overall accuracy |  |  |  |
-| Macro F1 |  |  |  |
-| F1 — `label_one` |  |  |  |
-| F1 — `label_two` |  |  |  |
+| Overall accuracy | 0.512 | 0.442 | -0.070 |
+| Macro F1 | 0.437 | 0.277 | -0.160 |
+| F1 — `actionable_advice` | 0.558 | 0.235 | -0.323 |
+| F1 — `help_request` | 0.600 | 0.596 | -0.004 |
+| F1 — `motivational_fluff` | 0.154 | 0.000 | -0.154 |
 
 **What I predicted before I looked:**
 <!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
      prediction made afterwards isn't one. -->
 
+I predict the trained model will beat the baseline on `help_request`.
+
 **What the gap actually means:**
 <!-- If the baseline matched your trained model, your fine-tuning added
      nothing — and that is a real finding, not a failure. Say it plainly. -->
+
+Currently the baseline is performing better than the trained model.
 
 
 
