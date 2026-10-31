@@ -297,29 +297,33 @@ Currently the baseline is performing better than the trained model.
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.70 every seed | 0.442 | 0.419 | 0.442 | MISSED |
+| 2. Per-label F1 (advice / fluff / help) | ≥ 0.60 each, `help_request` ≥ 0.75 | 0.235 / 0.000 / 0.596 | 0.000 / 0.000 / 0.590 | 0.250 / 0.000 / 0.586 | MISSED |
+| 3. Balance | each label ≥ 20% (≥ 40 posts), largest ≤ 2.5× smallest | 27% smallest (77 posts), ratio 1.57 | same | same | MET |
+| 4. Second labeller agreement | ≥ 80% | not run yet | not run yet | not run yet | pending |
+| 5. Confident predictions | ≥ 85% correct at ≥ 0.80 confidence, ≥ 10 such predictions | not recorded | not recorded | not recorded | not yet measurable |
+
+Macro F1: 0.277 / 0.197 / 0.279. Accuracy moved 0.023 across seeds, so the
+result is stable, just low. Run on Apple Silicon GPU (MPS), 43 test posts per
+seed. Criterion 3 doesn't depend on the seed. `results_three_seeds_before.json`
+doesn't save per-prediction confidence, so criterion 5 can't be checked from it.
 
 ### Confusion matrix
 
-<!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
-     An image of a matrix earns nothing. -->
+Seed 42 (the matrix section 7 prints).
 
-| true \ predicted |  |  |  |
+| true \ predicted | actionable_advice | motivational_fluff | help_request |
 |---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+| **actionable_advice** | 2 | 0 | 11 |
+| **motivational_fluff** | 1 | 0 | 11 |
+| **help_request** | 1 | 0 | 17 |
 
-**My biggest off-diagonal number, and what it means:**
-<!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
-     direction. "7 real analysis posts were called hot_take and only 3 went the
-     other way" is a direction, not just an error rate. -->
-
-
+**My biggest off-diagonal number, and what it means:** 11 real
+`actionable_advice` posts and 11 real `motivational_fluff` posts were each called
+`help_request`, while only 1 real `help_request` went the other way for each. The
+model didn't learn the boundary between giving advice and asking for it. It
+defaults to `help_request`, my biggest label, and never predicts
+`motivational_fluff`.
 
 ---
 
