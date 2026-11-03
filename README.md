@@ -300,13 +300,15 @@ Currently the baseline is performing better than the trained model.
 | 1. Overall accuracy | ≥ 0.70 every seed | 0.442 | 0.419 | 0.442 | MISSED |
 | 2. Per-label F1 (advice / fluff / help) | ≥ 0.60 each, `help_request` ≥ 0.75 | 0.235 / 0.000 / 0.596 | 0.000 / 0.000 / 0.590 | 0.250 / 0.000 / 0.586 | MISSED |
 | 3. Balance | each label ≥ 20% (≥ 40 posts), largest ≤ 2.5× smallest | 27% smallest (77 posts), ratio 1.57 | same | same | MET |
-| 4. Second labeller agreement | ≥ 80% | not run yet | not run yet | not run yet | pending |
-| 5. Confident predictions | ≥ 85% correct at ≥ 0.80 confidence, ≥ 10 such predictions | not recorded | not recorded | not recorded | not yet measurable |
+| 4. Second labeller agreement on test posts | ≥ 80% | 39/43 = 90.7% | not checked (different test split) | not checked (different test split) | MET (weak evidence) |
+| 5. Confident predictions | ≥ 85% correct at ≥ 0.80 confidence, ≥ 10 such predictions | 0 predictions ≥ 0.80 (max 0.55) | 0 predictions ≥ 0.80 (max 0.52) | 0 predictions ≥ 0.80 (max 0.61) | MISSED |
 
 Macro F1: 0.277 / 0.197 / 0.279. Accuracy moved 0.023 across seeds, so the
 result is stable, just low. Run on Apple Silicon GPU (MPS), 43 test posts per
-seed. Criterion 3 doesn't depend on the seed. `results_three_seeds_before.json`
-doesn't save per-prediction confidence, so criterion 5 can't be checked from it.
+seed. Criterion 3 doesn't depend on the seed. Criterion 4 was checked only on seed 42's split: it compares my labels
+of the 43 test posts (seed 42's split) with Claude's. Criterion 5 comes from
+re-training with the same settings and recording each prediction's confidence,
+since `results_three_seeds_before.json` doesn't store it.
 
 ### Confusion matrix
 
@@ -334,24 +336,31 @@ defaults to `help_request`, my biggest label, and never predicts
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Overall accuracy | ≥ 0.70 in every seed | MISSED | 0.442, 0.419, 0.442. All three are below the target. |
+| 2 | Per-label F1 | ≥ 0.60 each, `help_request` ≥ 0.75, every seed | MISSED | `motivational_fluff` F1 was 0.00 in all seeds, `actionable_advice` 0.00–0.25, `help_request` about 0.59. |
+| 3 | Balance | each label ≥ 20% (≥ 40 posts), largest ≤ 2.5× smallest | MET | Smallest label is `motivational_fluff` at 77 posts (27%). Largest is `help_request` at 121, a ratio of 1.57. |
+| 4 | Second labeller agrees on test posts | ≥ 80% | MET (weak evidence) | Claude, blind to my labels, labelled the 43 test posts from my definitions alone: 39/43 = 90.7%. Claude is not an independent human, and my labels began as AI pre-labels, so this likely overstates agreement. |
+| 5 | Confident predictions | ≥ 85% correct at ≥ 0.80 confidence, with ≥ 10 such predictions | MISSED | I re-trained with the same settings and recorded every confidence. No prediction reached 0.80 in any seed (highest 0.55 / 0.52 / 0.61), so the minimum of 10 failed. |
 
 **Diagnoses**
 
-<!-- For each miss: the cause, and how you know. The four common causes are:
-     too few examples for a label, a boundary you applied inconsistently, a
-     genuinely hard label pair, and a task the model can't reach from this
-     much data.
+**Criteria 1, 2, 5: the model barely trained. It isn't a labelling problem.**
+- It predicts `help_request` for almost everything and never predicts
+  `motivational_fluff` (11 `actionable_advice` and 11 `motivational_fluff` posts
+  called `help_request`).
+- Training loss only fell from about 1.09 to about 1.0 (random guessing is about
+  1.10), and top confidence never passed 0.61. I trained for about 39 steps on
+  198 posts.
+- My labels look consistent: 90.7% agreement on my test posts and 29/30 against
+  staff. The 4 test disagreements were all rows I had marked `pre-labelled,
+  unsure`, far too few to explain 0% F1 on a whole label.
+- Likely second cause: posts average about 350 words but the notebook reads only
+  128 tokens, so the model often misses the concrete steps.
+- Cause: a task the model can't reach with these settings. I haven't yet tested
+  more epochs or a longer max length.
 
-     ⚠️ Use your agreement report as evidence. It is the only instrument you
-     have that can tell a LABELLING problem from a MODEL problem, and this
-     section is graded on whether you used it that way. -->
-
-
+**Criterion 4:** met, but the second labeller was Claude and my labels began as AI
+pre-labels, so the biases may overlap.
 
 ---
 
@@ -363,7 +372,7 @@ defaults to `help_request`, my biggest label, and never predicts
      data/staff_taxonomy.md, not your own — so every argument below is made
      from those definitions and those decision rules. -->
 
-**Agreement rate:** ___ / 30 = ___%
+**Agreement rate:** 29 / 30 = 96.7%
 
 <!-- Nobody grades this number. A 60% who argues every disagreement from the
      stated rules beats a 95% who wrote "staff was right" nine times. Several
@@ -386,26 +395,21 @@ defaults to `help_request`, my biggest label, and never predicts
      what you did across your own 200. -->
 
 **1.**
-> *The post:*
+> *The post:* "Every injury thread on this forum is the same injury and the same three replies." (sp_020)
 >
-> *Staff said / I said:*
+> *Staff said / I said:* `hot_take` / `reaction`
 >
-> *My call, and why:*
+> *My call, and why:* Staff is right. Rule 2 asks whether a post is about the writer or about the world. This one is a general claim about the whole forum, with nothing offered to support it. It sounds irritated, but a `reaction` has to report something that just happened to the writer, and nothing did.
 >
-> *Which pile:*
+> *Which pile:* (a) the rule covered it and I applied it loosely. I read the tone as feeling instead of checking whether the post claims something general.
 
-**2.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
-
-**What the pattern in my disagreements tells me:**
-
-
+**What the pattern in my disagreements tells me:** With only one disagreement
+there isn't much of a pattern, but the miss is useful. I let tone ("annoyed")
+decide the label instead of what the post is actually doing. I may have done the
+same on my own labels, for example calling a post `motivational_fluff` because
+it sounds upbeat when it actually contains a method, or `help_request` because
+it sounds frustrated. That is something to check when I look at my own
+`actionable_advice` / `motivational_fluff` / `help_request` errors.
 
 ---
 
