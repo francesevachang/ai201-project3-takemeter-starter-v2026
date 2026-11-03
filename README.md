@@ -415,26 +415,60 @@ it sounds frustrated. That is something to check when I look at my own
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** One training setting: `EPOCHS` from 3 to 10. Learning rate
+(2e-5), batch size (16), max length (128), data and labels are unchanged. I ran
+the same three seeds and saved `results_three_seeds_after.json`.
 
-**Which diagnosis pointed at it:**
+**Which diagnosis pointed at it:** My diagnosis for criteria 1, 2 and 5 was that
+the model barely trained: loss only fell from about 1.09 to about 1.0, top
+confidence never passed 0.61, and it called almost everything `help_request`. My
+agreement checks (29/30 against staff, 39/43 on my own test posts) said the
+labels were consistent, so relabelling had no clear target. Before the real run I
+compared settings on the validation split only (seeds 42 and 7). Going from 3 to
+10 epochs raised validation accuracy by about 23–28 points, while raising max
+length from 128 to 256 added about 5 points at 3 epochs and nothing at 10. So I
+changed epochs and left max length alone.
 
 ### Run Log — After
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.70 every seed | 0.674 | 0.744 | 0.674 | MISSED |
+| 2. Per-label F1 (advice / fluff / help) | ≥ 0.60 each, `help_request` ≥ 0.75 | 0.690 / 0.476 / 0.778 | 0.696 / 0.560 / 0.895 | 0.621 / 0.636 / 0.743 | MISSED |
+| 3. Balance | each label ≥ 20% (≥ 40 posts), largest ≤ 2.5× smallest | 27% smallest, ratio 1.57 | same | same | MET |
+| 4. Second labeller agreement on test posts | ≥ 80% | 39/43 = 90.7% (labels unchanged) | not checked (different test split) | not checked (different test split) | MET (weak evidence) |
+| 5. Confident predictions | ≥ 85% correct at ≥ 0.80 confidence, ≥ 10 such predictions | 16/19 = 84.2% | 19/22 = 86.4% | 11/14 = 78.6% | MISSED |
 
-**Did it help, and how do I know:**
+Macro F1: 0.648 / 0.717 / 0.667. Accuracy moved 0.070 across seeds, enough that
+a criterion landing inside that band can't really be called either way. Same
+hardware (MPS) and 43 test posts per seed. Criterion 5 comes from re-training
+with the same settings and recording each prediction's confidence.
 
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
+Confusion matrix, seed 42:
 
+| true \ predicted | actionable_advice | motivational_fluff | help_request |
+|---|---|---|---|
+| **actionable_advice** | 10 | 2 | 1 |
+| **motivational_fluff** | 4 | 5 | 3 |
+| **help_request** | 2 | 2 | 14 |
 
+**Did it help, and how do I know:** Yes, a lot, but not enough to meet my
+targets. Before and after, per seed (42 / 7 / 2024):
+
+| Measure | Before | After |
+|---|---|---|
+| Accuracy | 0.442 / 0.419 / 0.442 | 0.674 / 0.744 / 0.674 |
+| Macro F1 | 0.277 / 0.197 / 0.279 | 0.648 / 0.717 / 0.667 |
+| `motivational_fluff` F1 | 0.00 / 0.00 / 0.00 | 0.476 / 0.560 / 0.636 |
+
+The model now predicts all three labels, where before it never predicted
+`motivational_fluff`. The big confusion is gone: 11 + 11 posts called
+`help_request` before, now the biggest off-diagonal is 4 real `motivational_fluff`
+posts called `actionable_advice` (only 2 went the other way). Seed 42 accuracy
+(0.674) is above the baseline's 0.512 on the same posts, where before the trained
+model was below it. Caveats: the test set is 43 posts, so one post moves accuracy
+by 2.3 points, and accuracy still swings 7 points across seeds. All criteria
+that were missed before (1, 2, 5) are still missed, just by much less.
 
 ---
 
@@ -442,13 +476,28 @@ it sounds frustrated. That is something to check when I look at my own
 
 <!-- For each criterion still missed: what you'd do, and why you stopped. -->
 
-
+- **Criterion 1 (accuracy ≥ 0.70):** 0.674 / 0.744 / 0.674, so two seeds miss by
+  under 3 points. I'd try more epochs or a slightly higher learning rate and
+  check validation loss for overfitting. I stopped because the assignment allows
+  one change.
+- **Criterion 2 (per-label F1):** `motivational_fluff` is still the weakest
+  (0.48 / 0.56 / 0.64), and seed 2024's `help_request` is 0.743, just under 0.75.
+  I'd add more `motivational_fluff` examples and re-check the fluff/advice
+  boundary with a human second labeller. I stopped because the change would
+  mix two fixes.
+- **Criterion 5 (confident predictions):** 84.2% / 86.4% / 78.6%, so only seed 7
+  passes. The model's confident guesses are right most of the time but not
+  reliably enough. Seed 2024 has 3 wrong out of 14. A bigger test set would tell
+  me whether that is real or noise.
 
 **The gap between what I meant my labels to capture and what the model
 learned:**
-<!-- Two sentences. Your confusion matrix is the evidence. -->
-
-
+I meant `motivational_fluff` to be "no method a reader could act on," but the
+model still mixes it with the other labels: in the seed 42 matrix, 4 real
+`motivational_fluff` posts were called `actionable_advice` and 3 `help_request`.
+It learned the "asks for help" label well and the advice/fluff line only partly,
+which fits my hardest boundary, where a post can sound like a method without
+giving one.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
